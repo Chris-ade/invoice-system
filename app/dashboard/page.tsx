@@ -15,7 +15,7 @@ import { useApiQuery } from "@/hooks/useApi";
 import PrivateRoute from "@/services/route";
 import { Users, Trash2, Plus, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -50,6 +50,7 @@ export default function Page() {
 
   const router = useRouter();
   const { toastSuccess, toastError } = useToast();
+  const createInvoiceForm = useRef<HTMLDivElement>(null);
 
   const { isPending, data, refetch, isRefetching } = useApiQuery("/dashboard");
   // Set listing data
@@ -235,7 +236,15 @@ export default function Page() {
                   variant="outline"
                   size="sm"
                   className="cursor-pointer"
-                  onClick={() => setShowCreateForm(!showCreateForm)}
+                  onClick={() => {
+                    setShowCreateForm(!showCreateForm);
+                    setTimeout(() => {
+                      createInvoiceForm.current?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }, 100);
+                  }}
                 >
                   <Plus className="w-4 h-4" />
                   Create Invoice
@@ -254,7 +263,7 @@ export default function Page() {
 
           {/* Invoice form */}
           {showCreateForm && (
-            <div>
+            <div ref={createInvoiceForm}>
               <Card>
                 <CardHeader>
                   <CardTitle>Create an invoice</CardTitle>

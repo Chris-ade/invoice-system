@@ -6,6 +6,7 @@ import { useApiQuery } from "@/hooks/useApi";
 import ActivityIndicator from "@/components/common/activity-indicator";
 import { useRouter } from "next/navigation";
 import { InvoiceResponse } from "@/types/invoice";
+import Barcode from "react-barcode";
 
 export default function PrintableInvoice() {
   const { id } = useParams<{ id: string }>();
@@ -76,7 +77,7 @@ export default function PrintableInvoice() {
       </div>
 
       {/* Items Table */}
-      <table className="w-full mb-1">
+      <table className="w-full mb-[3px]">
         <thead>
           <tr className="border-y border-dashed border-gray-500">
             <th className="text-left">QTY</th>
@@ -97,10 +98,10 @@ export default function PrintableInvoice() {
         </tbody>
       </table>
 
-      <hr className="border-dashed border-gray-600 my-1" />
+      <hr className="border-dashed border-gray-600" />
 
       {/* Totals */}
-      <div className="mb-2">
+      <div className="mb-[2px]">
         <p>
           <strong>Total:</strong> {invoice.total.toFixed(2)}
         </p>
@@ -115,12 +116,20 @@ export default function PrintableInvoice() {
         </p>
       </div>
 
-      <hr className="border-dashed border-gray-600 my-1" />
+      <hr className="border-dashed border-gray-600" />
 
       {/* Footer */}
-      <div className="text-center mt-2">
+      <div className="text-left">
         <p>Thanks For Your Patronage...</p>
         <p>Goods bought in good condition are Not Returnable</p>
+        <Barcode
+          value={invoice.invoiceNumber}
+          height={20}
+          className="w-[32mm] mx-auto"
+          displayValue={true}
+          fontSize={10}
+          margin={0}
+        />
       </div>
     </div>
   );
