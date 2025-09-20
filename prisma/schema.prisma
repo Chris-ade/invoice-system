@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Cashier {
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  password     String
+  invoices     Invoice[]
+  createdAt    DateTime       @default(now())
+  RefreshToken RefreshToken[]
+}
+
+model Invoice {
+  id            Int           @id @default(autoincrement())
+  invoiceNumber String        @unique
+  customerName  String
+  cashierId     Int
+  cashier       Cashier       @relation(fields: [cashierId], references: [id], onDelete: Cascade)
+  items         InvoiceItem[]
+
+  total         Float
+  invoiceDate   DateTime @default(now())
+  createdAt     DateTime @default(now())
+}
+
+model InvoiceItem {
+  id        Int     @id @default(autoincrement())
+  invoiceId Int
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  description ItemType
+  quantity    Int
+  amount      Float
+  total       Float
+}
+
+enum ItemType {
+  SACHET
+  BOTTLECL75
+  BOTTLECL50
+  OTHERS
+}
+
+model RefreshToken {
+  tokenId   String   @id
+  cashierId Int
+  cashier   Cashier  @relation(fields: [cashierId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revoked   Boolean  @default(false)
+
+  @@index([cashierId])
+}
